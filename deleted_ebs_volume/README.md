@@ -1,1 +1,1 @@
-# Write a Script in Python to Delete EBS volume Snaptchots not attached to EC2 instance
+# Write a Script in Python to Delete EBS volume Snaptchots not attached to a Running EC2 instance
