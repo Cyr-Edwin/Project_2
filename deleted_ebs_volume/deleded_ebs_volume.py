@@ -21,3 +21,17 @@ ec2_instance_ids = ec2_instance.describe_instances(Filters=[
 
 # varibale ids
 ids = set()
+
+# deleted snapshots list
+deleted_snapshots =[]
+
+# subscribe to the sns topic
+def subscribers(sns , topic_arn , emails):
+    for email in emails:
+        sns.subscribe(
+        TopicArn=topic_arn,
+        Protocol='email',
+        Endpoint=  email
+    )
+
+
