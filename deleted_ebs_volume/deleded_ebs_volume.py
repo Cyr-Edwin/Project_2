@@ -36,18 +36,19 @@ def subscribers(sns , topic_arn , emails):
 
 #  send sns message
 def send_sns(sns , snapshot_id):
-    topic_name=""
+    topic_name="topic"
     # create a topic if does not exist
     try:
         response = sns.create_topic(Name=topic_name)
         topic_arn= response['TopicArn']
+        print("response:"+ topic_arn)
 
         # subscribe the recipient to the topic
         subscribers(sns , topic_arn , ['cyredwin1@gmail.com'])
         
         # create  subject and message  variables
         subject = "EBS Snaspshot has/have deleted"
-        message = f"Following the policy the snapshots were deleted{', '.join(snapshot_id)}\n\nTimestamp: {datetime.datetime.utcnow()} UTC"
+        message = f"Following the policy, the snapshots were deleted.\n\nsnapshot_id:  {snapshot_id}\n\nTimestamp: {datetime.datetime.now()} UTC"
         
         # published the topic
         sns.publish(
@@ -89,7 +90,7 @@ for resp in response:
     if vol_id not in attached_volume:
         ec2_instance.delete_snapshot(SnapshotId=snaps_id)
         print(f"Snapshot ID : {snaps_id} is being deleted since it is not attached to any volume.")
-       # send_sns(sns , snaps_id)
+        send_sns(sns , snaps_id)
         deleted_snapshots.append(snaps_id)
     else:
         try:
@@ -98,7 +99,7 @@ for resp in response:
             if not volume['Volumes'][0]['Attachments']:
                 ec2_instance.delete_snapshot(SnapshotId=snaps_id)
                 print(f"Snapshot ID : {snaps_id} being deleted since it is not attached to any volume.")
-               # send_sns(sns , snaps_id)
+                send_sns(sns , snaps_id)
         except ec2_instance.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "InvalidVolume.NotFound":
                 # volume associated with snapshot is not found
